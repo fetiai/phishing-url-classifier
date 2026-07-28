@@ -114,12 +114,49 @@ jobs:
           fi
           echo "confirmed absent"
 
+      - name: Every page renders inside the container
+        # NOT just a health check. Streamlit answers 200 on / and on /_stcore/health
+        # whether or not the script inside it ran -- the server is healthy even when the
+        # app raises on every request. A green health check once hid a page that failed
+        # to import at all. This runs each page through Streamlit's own script runner,
+        # under the image's real sys.path, and fails on any exception.
+        run: |
+          docker run --rm phishguard:ci python -c "
+          from streamlit.testing.v1 import AppTest
+          pages = ['app/Home.py', 'app/pages/1_Single_URL.py', 'app/pages/2_Batch_CSV.py',
+                   'app/pages/3_Model_Evaluation.py', 'app/pages/4_Dataset_Explorer.py',
+                   'app/pages/5_Methodology.py']
+          failed = []
+          for page in pages:
+              at = AppTest.from_file(page, default_timeout=120)
+              at.run()
+              if at.exception:
+                  failed.append((page, '; '.join(f'{e.type}: {e.value}' for e in at.exception)))
+                  print(f'FAIL {page}')
+              else:
+                  print(f'ok   {page}')
+          if failed:
+              for page, detail in failed:
+                  print(f'::error::{page} raised {detail}')
+              raise SystemExit(1)
+          "
+
       - name: Container answers its health check
         run: |
           docker run -d --name pg -p 8501:8501 -e FETCH_ENABLED=false phishguard:ci
-          for i in $(seq 1 30); do
+          for i in $(seq 1 40); do
             if curl -fsS http://127.0.0.1:8501/_stcore/health >/dev/null 2>&1; then
-              echo "healthy after ${i}s"; docker rm -f pg; exit 0
+              echo "healthy after ${i}s"
+              # A health check alone proves only that something is listening, so also
+              # assert the app did not raise while serving.
+              if docker logs pg 2>&1 | grep -qi "uncaught app execution"; then
+                echo "::error::the app raised while serving"
+                docker logs pg
+                docker rm -f pg
+                exit 1
+              fi
+              docker rm -f pg
+              exit 0
             fi
             sleep 1
           done

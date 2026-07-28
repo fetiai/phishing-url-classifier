@@ -37,6 +37,11 @@ FROM python:3.13-slim AS runtime
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
+    # `streamlit run app/Home.py` puts the *script's* directory on sys.path, not the
+    # working directory, so `from app.state import ...` finds nothing. Locally an editable
+    # install hides this by putting the repo root on the path; the image installs only the
+    # pinned requirements, so it has to be stated.
+    PYTHONPATH=/app \
     # BLAS threads are capped deliberately. The KNN distance kernel will happily saturate
     # every core it can see, and on a 2 vCPU box that starves the web server that has to
     # answer the request.

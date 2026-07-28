@@ -53,6 +53,18 @@ from urllib.parse import urlparse
 import numpy as np
 import pandas as pd
 
+
+def scalar_float(value: Any) -> float:
+    """Coerce a pandas reduction result to a plain float.
+
+    Reductions such as ``.skew()`` and ``.median()`` are typed as a wide union covering
+    every dtype a Series might hold. On the numeric columns here the value is always a
+    float; this narrows it so arithmetic and comparisons type-check, and it is an identity
+    on the values that actually occur.
+    """
+    return float(value)
+
+
 # ---------------------------------------------------------------------------
 # Fit-time statistic
 # ---------------------------------------------------------------------------
@@ -220,14 +232,14 @@ def compute_tld_prob_statistics(
     Note the threshold: ``abs(skew) > 1`` here, against ``abs(skew) > 3`` in the numeric
     imputer. The two are genuinely different in the original and both are preserved.
     """
-    skewness = data[tld_prob_col].skew()
+    skewness = scalar_float(data[tld_prob_col].skew())
     if skewness > 1 or skewness < -1:
-        global_fill_value = data[tld_prob_col].median()
+        global_fill_value = scalar_float(data[tld_prob_col].median())
     else:
-        global_fill_value = data[tld_prob_col].mean()
+        global_fill_value = scalar_float(data[tld_prob_col].mean())
 
     tld_prob_mean = data.groupby(tld_col)[tld_prob_col].mean()
-    return tld_prob_mean, float(global_fill_value)
+    return tld_prob_mean, global_fill_value
 
 
 def fill_url_char_prob(

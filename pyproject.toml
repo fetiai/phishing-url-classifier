@@ -75,7 +75,10 @@ known-first-party = ["phishguard", "app"]
 # mypy
 # ---------------------------------------------------------------------------
 [tool.mypy]
-python_version = "3.10"
+# 3.13 rather than the package's 3.10 floor: the pinned numpy's own type stubs use `type`
+# statements, which mypy will not parse below 3.12. Checking against 3.13 also matches the
+# interpreter in the image, so the types checked here are the types that run in production.
+python_version = "3.13"
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = false

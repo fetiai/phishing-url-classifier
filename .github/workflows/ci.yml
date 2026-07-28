@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.13"
+
+jobs:
+  fast:
+    name: lint, types, fast tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+          pip install -e . --no-deps
+
+      - name: Lint
+        run: ruff check phishguard app scripts tests
+
+      - name: Types
+        run: mypy phishguard
+
+      - name: Fast tests
+        run: pytest -m "not slow and not network and not container and not artifacts"
+
+  notebook-frozen:
+    name: the source notebook is unmodified
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Assert the notebook has not been edited
+        run: |
+          # The notebook is historical provenance. Everything the system does is
+          # reimplemented under phishguard/ and tested against a frozen copy of the
+          # original functions, so there is never a reason to edit it -- and editing it
+          # would silently move the oracle the port is measured against.
+          if git diff --name-only origin/main...HEAD -- notebooks/ | grep -q .; then
+            echo "::error::notebooks/ was modified. It is frozen provenance and must not change."
+            git diff --stat origin/main...HEAD -- notebooks/
+            exit 1
+          fi
+          echo "notebooks/ unchanged"
+
+  regression:
+    name: full offline suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+          pip install -e . --no-deps
+
+      - name: Full suite, no network
+        run: pytest -m "not network and not container" --cov=phishguard --cov-report=term-missing

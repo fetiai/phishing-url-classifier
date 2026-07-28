@@ -1,0 +1,14 @@
+# Development-only dependencies. Not installed in the runtime image.
+-r requirements.txt
+
+coverage==7.15.2
+iniconfig==2.3.0
+mypy==2.3.0
+mypy_extensions==1.1.0
+pandas-stubs==3.0.3.260530
+pluggy==1.6.0
+Pygments==2.20.0
+pytest==9.1.1
+pytest-cov==7.1.0
+ruff==0.16.0
+types-requests==2.33.0.20260712

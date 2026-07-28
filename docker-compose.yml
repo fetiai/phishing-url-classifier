@@ -1,0 +1,94 @@
+# Single replica, deliberately. Streamlit sessions are WebSocket-stateful, so a second
+# replica behind a round-robin proxy would drop every session that reconnects to the other
+# one. Scaling this service horizontally means solving session affinity first.
+
+services:
+  app:
+    build: .
+    image: phishguard:latest
+    restart: unless-stopped
+
+    environment:
+      # --- the kill switch ------------------------------------------------
+      # Flip to false and restart to degrade to URL-only features without a rebuild.
+      # The interface renders the degraded state; it does not error.
+      FETCH_ENABLED: "true"
+
+      # Whether the Robots feature costs a second guarded request to /robots.txt.
+      # Never consulted to decide whether the page fetch is allowed -- it is a feature
+      # input, not an authorisation mechanism.
+      FETCH_ROBOTS: "true"
+
+      # --- SSRF controls --------------------------------------------------
+      # REQUIRED. This host's own public addresses. Leaving it empty leaves the fetcher
+      # able to reach the service itself, which is an SSRF hole pointed at the app.
+      FETCH_SELF_IPS: "${FETCH_SELF_IPS:?set this to the VPS public IPv4/IPv6, comma separated}"
+
+      # Operational blocklist, for responding to an abuse report without a redeploy.
+      # Subdomains of a listed host are covered too.
+      FETCH_DENY_HOSTS: "${FETCH_DENY_HOSTS:-}"
+
+      # --- transfer limits ------------------------------------------------
+      # In-flight memory is bounded by FETCH_CONCURRENCY * FETCH_MAX_BYTES, which is
+      # 16 MiB here. Raising both without raising mem_limit is how the container gets
+      # OOM-killed under load.
+      FETCH_TIMEOUT_S: "10"
+      FETCH_MAX_BYTES: "2097152"
+      FETCH_MAX_REDIRECTS: "3"
+      FETCH_CONCURRENCY: "8"
+
+      # --- abuse controls -------------------------------------------------
+      FETCH_RATE_PER_SESSION: "10"
+      FETCH_RATE_WINDOW_S: "300"
+      FETCH_BATCH_MAX_URLS: "25"
+
+      # --- model behaviour ------------------------------------------------
+      # Settled by the agreement harness, not by preference.
+      REF_SCOPE: "anchor"
+      # Below this share of page features actually read, the app abstains.
+      COVERAGE_MIN_RATIO: "0.60"
+
+    # Expected resident set is roughly 400 MB: the KNN reference set, the sklearn model,
+    # and the dataset sample. The limit leaves headroom on a 2 GB box for the proxy and
+    # the OS.
+    mem_limit: 1500m
+    cpus: 2.0
+
+    expose:
+      - "8501"
+
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=4).status==200 else 1)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+    security_opt:
+      - no-new-privileges:true
+    read_only: false
+    tmpfs:
+      - /tmp
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      SITE_ADDRESS: "${SITE_ADDRESS:?set this to the public hostname}"
+
+volumes:
+  caddy_data:
+  caddy_config:

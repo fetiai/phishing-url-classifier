@@ -401,17 +401,37 @@ class Preprocessor:
             return col
 
         modes = step.modes
+        global_mode = step.global_mode
+
+        # Build every key at once rather than looping row by row. Row-wise .loc lookups on
+        # a 53-column frame cost enough that, across 18 cascade steps and the ~40% of
+        # 112,000 training rows that need filling, they dominate the whole fit. The
+        # arithmetic is unchanged: each key is still built only from its own row's values.
+        key_block = X.loc[null_mask, list(step.groupby_cols)]
+        key_values = key_block.to_numpy(dtype="float64", na_value=np.nan)
+
+        resolved = np.empty(len(key_values), dtype="float64")
+        missed = 0
+        for i, key_row in enumerate(key_values):
+            if np.isnan(key_row).any():
+                # A key component that is itself missing cannot address the table. It is a
+                # fallback, not an error -- the earlier steps of the cascade may leave a
+                # conditioning column unfilled on a sufficiently sparse row.
+                resolved[i] = global_mode
+                missed += 1
+                continue
+            value = modes.get(tuple(key_row.tolist()))
+            if value is None:
+                resolved[i] = global_mode
+                missed += 1
+            else:
+                resolved[i] = value
+
+        if count_fallbacks and missed:
+            self.fallback_counts[step.column] += missed
+
         filled = col.copy()
-        for idx in col.index[null_mask]:
-            row = X.loc[idx]
-            try:
-                key = _cascade_key(row, step.groupby_cols)
-            except (TypeError, ValueError):
-                key = None
-            value = modes.get(key, step.global_mode) if key is not None else step.global_mode
-            if count_fallbacks and (key is None or key not in modes):
-                self.fallback_counts[step.column] += 1
-            filled.at[idx] = value
+        filled.loc[null_mask] = resolved
         return filled
 
 

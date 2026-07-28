@@ -99,10 +99,15 @@ class _PinnedAdapter(HTTPAdapter):
         return super().send(request, **kwargs)
 
     def init_poolmanager(self, *args: Any, **kwargs: Any) -> None:  # type: ignore[override]
-        # Verify the certificate against the name the user asked for, not the IP we
-        # dialled. Without this, pinning would break TLS validation.
-        kwargs["server_hostname"] = self._target.host
-        kwargs["assert_hostname"] = self._target.host
+        # Over TLS, the socket is opened to the pinned IP but SNI and certificate
+        # verification must still use the hostname the user asked for -- otherwise pinning
+        # would trade an SSRF hole for a broken TLS check.
+        #
+        # These are HTTPS-only connection arguments. A plain HTTP connection rejects them
+        # outright, so they are added only for the scheme that understands them.
+        if self._target.scheme == "https":
+            kwargs["server_hostname"] = self._target.host
+            kwargs["assert_hostname"] = self._target.host
         super().init_poolmanager(*args, **kwargs)
 
 

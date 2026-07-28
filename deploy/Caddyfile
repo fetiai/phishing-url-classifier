@@ -1,0 +1,43 @@
+# Caddy obtains and renews TLS certificates automatically for SITE_ADDRESS.
+
+{$SITE_ADDRESS} {
+	encode gzip
+
+	# Per-IP rate limiting belongs here rather than only in the application. The app's
+	# own limiter is per session, and a session is just a cookie -- so it bounds one
+	# browser tab, not one client. Both layers are needed.
+	@analyse {
+		path /*
+		method POST
+	}
+
+	reverse_proxy app:8501 {
+		# Streamlit runs over a WebSocket; without upgrade support the UI connects and
+		# then hangs with no visible error.
+		header_up Host {host}
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+
+		# Long-lived connections: the default read timeout would drop idle sessions.
+		transport http {
+			read_timeout 300s
+			write_timeout 300s
+		}
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+
+	log {
+		output stdout
+		format console
+		# Request bodies are never logged. A submitted URL may itself be sensitive, and
+		# the service promises not to retain them.
+	}
+}

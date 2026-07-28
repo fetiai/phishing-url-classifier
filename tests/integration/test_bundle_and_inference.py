@@ -246,11 +246,27 @@ def test_successful_fetch_yields_scraped_page_features(bundle):
         fetch_result=_fixture_fetch(),
         fetch_config=FetchConfig(enabled=True, robots=False),
     )
-    scraped = [
+    scraped = {
         n for n in schema.HTML_FEATURES if result.provenance[n] == schema.PROVENANCE_SCRAPED
-    ]
-    assert len(scraped) >= 20, f"only {len(scraped)} page features were read from the fixture"
+    }
+    demoted = {
+        n for n in schema.HTML_FEATURES if result.provenance[n] == schema.PROVENANCE_DEMOTED
+    }
+
+    # Every page feature that survived the agreement gate must be read from a page this
+    # rich. The demoted ones must not be, however readable they would have been -- that is
+    # what demotion means.
+    assert demoted == set(bundle.demoted)
+    assert scraped == set(schema.HTML_FEATURES) - set(bundle.demoted), (
+        f"expected every non-demoted page feature to be read; missing "
+        f"{sorted(set(schema.HTML_FEATURES) - set(bundle.demoted) - scraped)}"
+    )
     assert result.fetch_state == "scraped"
+
+    # A clean fetch must actually yield a verdict. Coverage is measured against the
+    # features that can still be obtained, so demoting features reduces the evidence base
+    # without permanently disabling the service.
+    assert result.coverage_ratio == 1.0
     assert not result.abstained
 
 
@@ -312,8 +328,12 @@ def test_coverage_denominator_is_the_page_features_only(bundle):
         fetch_result=FetchResult(outcome=FetchOutcome.TIMEOUT, url="https://dead.example.com/"),
         fetch_config=FetchConfig(enabled=True, robots=False),
     )
-    assert result.coverage_total == len(schema.HTML_FEATURES) == 25
+    assert result.coverage_total == len(schema.HTML_FEATURES) - len(bundle.demoted)
     assert result.coverage_scraped == 0
+    assert result.coverage_total > 0, (
+        "if every page feature were demoted there would be no page evidence to gate on "
+        "and the coverage rule would be meaningless"
+    )
 
 
 def test_single_url_matches_a_one_row_batch(bundle):
@@ -327,7 +347,11 @@ def test_single_url_matches_a_one_row_batch(bundle):
 
     from phishguard.features.extract import build_record
 
-    record, _ = build_record("https://acme.example.com/login", _fixture_fetch())
+    # The demotion list has to be passed here too. classify_url reads it from the bundle,
+    # and a record built without it carries values the served extractor never emits.
+    record, _ = build_record(
+        "https://acme.example.com/login", _fixture_fetch(), demoted=bundle.demoted
+    )
     matrix = Preprocessor(bundle.stats).transform_matrix(record)
 
     for i, name in enumerate(schema.FEATURE_ORDER):

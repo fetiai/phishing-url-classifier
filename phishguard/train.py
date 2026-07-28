@@ -186,6 +186,7 @@ def train(
     out_dir: Path,
     demoted: frozenset[str] = frozenset(),
     with_legacy: bool = True,
+    agreement: Path | None = None,
 ) -> dict[str, Any]:
     log.info("loading %s", source)
     X, y = load_raw(source)
@@ -329,7 +330,22 @@ def train(
         }
     write_json(out_dir / "metrics.json", metrics_payload)
 
-    if not (out_dir / "extraction_agreement.json").exists():
+    # The agreement report is an input to training, not a by-product of it: the demotion
+    # list decides what the extractor will emit at serving time, and a model fitted on
+    # features it will never receive is fitted on the wrong thing.
+    if agreement is not None and agreement.exists():
+        report = json.loads(agreement.read_text(encoding="utf-8"))
+        reported = set(report.get("demoted", ()))
+        if reported != set(demoted):
+            log.warning(
+                "agreement report demotes %s but --demote was given %s; the bundle records "
+                "what was actually trained on",
+                sorted(reported),
+                sorted(demoted),
+            )
+        report["trained_with_demoted"] = sorted(demoted)
+        write_json(out_dir / "extraction_agreement.json", report)
+    else:
         write_json(
             out_dir / "extraction_agreement.json",
             {
@@ -372,6 +388,12 @@ def main() -> None:
         help="comma-separated page features to demote, from the agreement gate",
     )
     parser.add_argument(
+        "--agreement",
+        type=Path,
+        default=None,
+        help="extraction agreement report to fold into the bundle",
+    )
+    parser.add_argument(
         "--no-legacy",
         action="store_true",
         help="skip reproducing the original's leaky configuration for comparison",
@@ -395,6 +417,7 @@ def main() -> None:
         args.out,
         demoted,
         with_legacy=(args.profile == "corrected" and not args.no_legacy),
+        agreement=args.agreement,
     )
     elapsed = time.monotonic() - started
 

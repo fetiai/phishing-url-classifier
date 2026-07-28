@@ -76,3 +76,54 @@ jobs:
 
       - name: Full suite, no network
         run: pytest -m "not network and not container" --cov=phishguard --cov-report=term-missing
+
+  container:
+    name: image builds and reproduces its golden row
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+          pip install -e . --no-deps
+
+      - name: Train
+        run: python -m phishguard.train --profile corrected --no-legacy
+
+      - name: Build image
+        run: docker build -t phishguard:ci .
+
+      - name: Golden row inside the container
+        # The build already runs this, but running it again against the finished image
+        # proves the artifacts that shipped are the artifacts that were tested, and that
+        # the installed dependency set produces the same numbers.
+        run: docker run --rm phishguard:ci python -m phishguard.selftest --golden
+
+      - name: Training data and the notebook are absent from the image
+        run: |
+          if docker run --rm phishguard:ci sh -c 'ls /app/data /app/notebooks' 2>/dev/null; then
+            echo "::error::the image contains data/ or notebooks/; check .dockerignore"
+            exit 1
+          fi
+          echo "confirmed absent"
+
+      - name: Container answers its health check
+        run: |
+          docker run -d --name pg -p 8501:8501 -e FETCH_ENABLED=false phishguard:ci
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8501/_stcore/health >/dev/null 2>&1; then
+              echo "healthy after ${i}s"; docker rm -f pg; exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::container never became healthy"
+          docker logs pg
+          docker rm -f pg
+          exit 1

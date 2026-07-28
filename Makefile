@@ -33,7 +33,15 @@ test-fast: ## Tiers that run in seconds -- the CI `fast` job
 test-network: ## Tier 6b live agreement -- nightly only
 	$(PY) -m pytest -m network
 
-train: ## Build the canonical artifact bundle
+train: ## Build the canonical artifact bundle, honouring the demotion list
+	# The agreement report is an input, not a by-product: the demotion list decides what
+	# the extractor emits at serving time, so a model fitted without it is fitted on
+	# features it will never receive.
+	$(PY) -m phishguard.train --profile corrected \
+		--agreement artifacts/v1/extraction_agreement.json \
+		--demote "$$($(PY) -c "import json,pathlib; p=pathlib.Path('artifacts/v1/extraction_agreement.json'); print(','.join(json.loads(p.read_text()).get('demoted',[])) if p.exists() else '')")"
+
+train-fresh: ## Build a bundle with no demotion list (first run, before the gate)
 	$(PY) -m phishguard.train --profile corrected
 
 train-legacy: ## Reproduce the notebook's recorded (leaky) metrics

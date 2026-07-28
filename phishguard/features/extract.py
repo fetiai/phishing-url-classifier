@@ -118,17 +118,32 @@ def finalise_provenance(
 
 
 def coverage(provenance: dict[str, str]) -> tuple[int, int, float]:
-    """How much of the page evidence is real: (scraped, total, ratio).
+    """How much of the obtainable page evidence this fetch actually produced.
 
-    The denominator is the 25 page features, not all 49. The URL-derived features are
-    always available, so including them would inflate coverage on a page that was never
-    successfully fetched -- reporting 21/49 as "43% covered" when the actual page evidence
-    is zero.
+    Two decisions about the denominator, both load-bearing.
+
+    It is the page features, not all 49. The URL-derived features are always available, so
+    including them would inflate coverage on a page that was never fetched at all --
+    reporting 21/49 as "43% covered" when the page evidence is zero.
+
+    It excludes **demoted** features. Those are permanently unavailable by policy, whatever
+    happens on the wire, so counting them would conflate two different facts: "this fetch
+    did not get much" and "we can never measure this". The abstention rule exists to detect
+    the first. Counting demotions in the denominator would also make the threshold move
+    every time the agreement gate is re-run -- and with enough demotions the service would
+    abstain on every request no matter how well the fetch went, which is not caution, just
+    breakage.
+
+    How many features are permanently demoted is reported separately, so the reduced
+    evidence base stays visible rather than being hidden by this choice.
     """
-    total = len(schema.HTML_FEATURES)
-    scraped = sum(
-        1
+    obtainable = [
+        name
         for name in schema.HTML_FEATURES
-        if provenance.get(name) == schema.PROVENANCE_SCRAPED
+        if provenance.get(name) != schema.PROVENANCE_DEMOTED
+    ]
+    total = len(obtainable)
+    scraped = sum(
+        1 for name in obtainable if provenance.get(name) == schema.PROVENANCE_SCRAPED
     )
     return scraped, total, (scraped / total if total else 0.0)

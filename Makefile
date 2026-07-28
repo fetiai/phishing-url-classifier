@@ -27,10 +27,10 @@ type: ## mypy
 test: ## Full offline suite (excludes network/container tiers)
 	$(PY) -m pytest -m "not network and not container"
 
-test-fast: ## Tiers that run in seconds -- the CI `fast` job
+test-fast: ## The subset that runs in seconds
 	$(PY) -m pytest -m "not slow and not network and not container and not artifacts"
 
-test-network: ## Tier 6b live agreement -- nightly only
+test-network: ## Live agreement against the internet -- run manually
 	$(PY) -m pytest -m network
 
 train: ## Build the canonical artifact bundle, honouring the demotion list
@@ -62,8 +62,35 @@ app: ## Run Streamlit locally
 docker-build: ## Build the deployment image
 	docker build -t $(IMAGE) .
 
-docker-test: ## Tier 9: golden row inside the container
+docker-test: ## Verify the built image: golden row, then every page renders
 	docker run --rm $(IMAGE) python -m phishguard.selftest --golden
+	# Not a health check. Streamlit answers 200 on / and /_stcore/health whether or not
+	# the script inside them ran, so a status code cannot tell a working app from one
+	# that raises on every request -- which is exactly how a broken import once passed.
+	# This runs each page through Streamlit's own script runner under the image's real
+	# sys.path, which is the only place a packaging fault like that is visible.
+	docker run --rm $(IMAGE) python -c "$$RENDER_CHECK"
+
+define RENDER_CHECK
+from streamlit.testing.v1 import AppTest
+pages = ['app/Home.py', 'app/pages/1_Single_URL.py', 'app/pages/2_Batch_CSV.py',
+         'app/pages/3_Model_Evaluation.py', 'app/pages/4_Dataset_Explorer.py',
+         'app/pages/5_Methodology.py']
+failed = []
+for page in pages:
+    at = AppTest.from_file(page, default_timeout=120)
+    at.run()
+    if at.exception:
+        failed.append((page, '; '.join(f'{e.type}: {e.value}' for e in at.exception)))
+        print(f'FAIL {page}')
+    else:
+        print(f'ok   {page}')
+if failed:
+    for page, detail in failed:
+        print(f'  {page}: {detail}')
+    raise SystemExit(1)
+endef
+export RENDER_CHECK
 
 clean:
 	rm -rf .pytest_cache .mypy_cache .ruff_cache htmlcov .coverage

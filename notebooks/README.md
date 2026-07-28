@@ -5,7 +5,7 @@ is kept here as **historical provenance and nothing else**.
 
 ## It is never edited
 
-A CI job asserts this file is unchanged on every pull request.
+Nothing enforces this automatically, so it rests on whoever touches the repository next.
 
 The reason is not sentiment. A verbatim copy of the notebook's feature functions lives in
 `tests/legacy_reference.py` and is the oracle the production port is asserted bit-identical

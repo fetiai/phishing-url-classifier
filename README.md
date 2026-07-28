@@ -194,7 +194,7 @@ rather than what the dataset saw.
 
 ```bash
 make test         # everything offline
-make test-fast    # the CI gate
+make test-fast    # the subset that runs in seconds
 ```
 
 The tests that carry the weight:

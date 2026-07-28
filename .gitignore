@@ -1,0 +1,32 @@
+# Artifact bundle -- built by train.py, baked into the image, never committed.
+# The image tag is the complete description of which models are being served.
+artifacts/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Local environment
+.env

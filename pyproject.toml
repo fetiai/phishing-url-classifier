@@ -1,0 +1,112 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phishguard"
+version = "1.0.0"
+description = "KNN and Gaussian Naive Bayes phishing URL classification, served as a full-stack Streamlit application"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Kelompok 16 ITB" },
+]
+
+# Runtime dependencies are pinned in requirements.txt. This list carries only the
+# lower bounds that the code actually depends on, so an editable install works.
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scikit-learn>=1.4",
+    "scipy>=1.11",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "requests>=2.31",
+    "tldextract>=5.1",
+    "joblib>=1.3",
+    "pyarrow>=15.0",
+]
+
+[project.optional-dependencies]
+app = ["streamlit>=1.31", "altair>=5.2"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "ruff>=0.3",
+    "mypy>=1.9",
+    "pandas-stubs",
+    "types-requests",
+]
+
+[tool.setuptools.packages.find]
+include = ["phishguard*"]
+
+# ---------------------------------------------------------------------------
+# ruff
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = ["notebooks", "tests/legacy_reference.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "RET", "ARG", "PTH"]
+ignore = [
+    "E501",   # line length is handled by the formatter
+    "B905",   # zip strict= is 3.10+, but the ported code predates it
+    "SIM108", # ternaries are not always clearer than if/else in ported code
+]
+
+[tool.ruff.lint.per-file-ignores]
+# The legacy reference is a verbatim, frozen copy of the notebook's functions. It is the
+# oracle the ported code is tested against, so it is exempt from every lint rule by design:
+# reformatting it would weaken the very comparison it exists to provide.
+"tests/legacy_reference.py" = ["ALL"]
+# Ported functions keep the notebook's names and shapes.
+"phishguard/features/url_features.py" = ["ARG001", "C901", "PLR0912"]
+"tests/**" = ["ARG001", "ARG002"]
+"app/**" = ["ARG001"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["phishguard", "app"]
+
+# ---------------------------------------------------------------------------
+# mypy
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = false
+no_implicit_optional = true
+check_untyped_defs = true
+ignore_missing_imports = true
+exclude = ["^notebooks/", "^tests/legacy_reference\\.py$", "^build/"]
+
+[[tool.mypy.overrides]]
+module = "tests.legacy_reference"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "scripts.*", "app.*"]
+disallow_untyped_defs = false
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: tier tests that take more than a few seconds",
+    "network: requires live outbound network access; excluded from the default run",
+    "container: requires a built Docker image",
+    "artifacts: requires a trained artifact bundle at artifacts/v1/",
+]
+
+[tool.coverage.run]
+source = ["phishguard"]
+omit = ["*/tests/*", "*/notebooks/*"]

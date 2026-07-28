@@ -1,0 +1,29 @@
+# Training data and the source notebook must be absent from the shipped image: the
+# container serves a baked artifact bundle and has no reason to carry 31 MB of CSV.
+# The container test tier asserts their absence.
+data/
+notebooks/
+doc/
+tests/
+scripts/
+
+.git/
+.github/
+.venv/
+venv/
+.omc/
+.DS_Store
+
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+Makefile
+
+# No documentation of any kind ships in the image except the README.
+**/*.md
+!README.md

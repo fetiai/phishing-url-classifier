@@ -98,17 +98,31 @@ def finalise_provenance(
     resolved = dict(provenance)
     row = frame_before_transform.iloc[0]
     have_url = pd.notna(row.get("URL"))
+    have_title = pd.notna(row.get("Title"))
 
     for name in schema.FEATURE_ORDER:
         if resolved.get(name) == schema.PROVENANCE_DEMOTED:
             continue
 
-        # A URL-derived feature is left blank here on purpose -- the fill chain inside
-        # transform computes it, so that single-URL inference runs the same code as
-        # training. Blank therefore means "not computed yet", not "unknown", and it stays
-        # attributed to the URL as long as there is a URL to derive it from.
+        # Some features are deliberately left blank by the record builder: the fill chain
+        # inside transform computes them, which is what makes single-URL inference run the
+        # same code as training. For those, blank means "not computed yet", not "unknown",
+        # and the honest label is the source they will be computed *from*.
+        #
+        # Getting this wrong is not cosmetic. Marking a value "imputed" when it was in
+        # fact derived from real evidence understates what the system measured, and the
+        # coverage meter -- which drives the abstention rule -- is built from these labels.
         if name in schema.URL_ONLY_FEATURES and have_url:
             resolved[name] = schema.PROVENANCE_URL
+            continue
+
+        # The three title-dependent hybrids have URL-side implementations but consume a
+        # Title that only exists once the page has been fetched and parsed. With a title
+        # they are derived from scraped evidence; without one they genuinely are imputed.
+        if name in schema.TITLE_HYBRID_FEATURES:
+            resolved[name] = (
+                schema.PROVENANCE_SCRAPED if have_title else schema.PROVENANCE_IMPUTED
+            )
             continue
 
         if name in frame_before_transform.columns and pd.isna(row[name]):

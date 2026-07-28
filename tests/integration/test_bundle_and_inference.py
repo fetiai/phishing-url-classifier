@@ -399,3 +399,47 @@ def test_transformed_vector_is_finite_for_every_fetch_state(bundle):
         )
         values = np.array(list(result.features.values()))
         assert np.isfinite(values).all(), outcome
+
+
+def test_title_hybrids_are_attributed_to_the_page_when_a_title_was_scraped(bundle):
+    """The three title-dependent hybrids are computed by the fill chain, not by the
+    record builder, so they arrive blank -- but blank means "not computed yet", not
+    "unknown". With a scraped title they are derived from real page evidence, and
+    labelling them imputed would understate what the system actually measured.
+    """
+    result = classify_url(
+        "https://acme.example.com/login",
+        bundle,
+        fetch_result=_fixture_fetch(),
+        fetch_config=FetchConfig(enabled=True, robots=False),
+    )
+    for name in schema.TITLE_HYBRID_FEATURES:
+        assert result.provenance[name] == schema.PROVENANCE_SCRAPED, name
+
+
+def test_title_hybrids_are_imputed_when_there_is_no_title(bundle):
+    result = classify_url(
+        "https://dead.example.com/",
+        bundle,
+        fetch_result=FetchResult(outcome=FetchOutcome.TIMEOUT, url="https://dead.example.com/"),
+        fetch_config=FetchConfig(enabled=True, robots=False),
+    )
+    for name in schema.TITLE_HYBRID_FEATURES:
+        assert result.provenance[name] == schema.PROVENANCE_IMPUTED, name
+
+
+def test_a_clean_fetch_leaves_nothing_unaccounted_for(bundle):
+    """On a successful fetch every feature should be attributable to a real source:
+    the URL, the page, or an explicit policy demotion. A stray 'imputed' means something
+    was silently filled in without the interface being able to say why."""
+    result = classify_url(
+        "https://acme.example.com/login",
+        bundle,
+        fetch_result=_fixture_fetch(),
+        fetch_config=FetchConfig(enabled=True, robots=False),
+    )
+    imputed = [
+        n for n in schema.FEATURE_ORDER
+        if result.provenance[n] == schema.PROVENANCE_IMPUTED
+    ]
+    assert not imputed, f"unexpectedly imputed on a clean fetch: {imputed}"

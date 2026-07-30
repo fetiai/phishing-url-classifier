@@ -1,0 +1,514 @@
+{
+  "caveat": "Agreement on phishing URLs mostly measures link rot rather than extractor correctness. Those domains are largely dead, so what is fetched today is a registrar or parking page, not the page the dataset was built from. The phishing split is reported for transparency and does not gate.",
+  "demoted": [
+    "Bank",
+    "HasExternalFormSubmit",
+    "HasFavicon",
+    "HasHiddenFields",
+    "HasSubmitButton",
+    "LargestLineLength",
+    "NoOfExternalRef",
+    "NoOfPopup",
+    "NoOfSelfRef",
+    "NoOfiFrame",
+    "Pay",
+    "Robots"
+  ],
+  "features": {
+    "Bank": {
+      "cohens_kappa": 0.2464,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 26,
+      "passed": false,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "binary",
+        "value": null
+      },
+      "type": "binary",
+      "value": 0.8462
+    },
+    "Crypto": {
+      "cohens_kappa": NaN,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 35,
+      "passed": true,
+      "phishing_split": {
+        "cohens_kappa": NaN,
+        "gate": 0.85,
+        "metric": "agreement_rate",
+        "n": 5,
+        "passed": true,
+        "type": "binary",
+        "value": 1.0
+      },
+      "type": "binary",
+      "value": 1.0
+    },
+    "HasCopyrightInfo": {
+      "cohens_kappa": 0.6929,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 26,
+      "passed": true,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "binary",
+        "value": null
+      },
+      "type": "binary",
+      "value": 0.8846
+    },
+    "HasDescription": {
+      "cohens_kappa": 0.8413,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 30,
+      "passed": true,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "binary",
+        "value": null
+      },
+      "type": "binary",
+      "value": 0.9333
+    },
+    "HasExternalFormSubmit": {
+      "cohens_kappa": -0.0638,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 25,
+      "passed": false,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "binary",
+        "value": null
+      },
+      "type": "binary",
+      "value": 0.84
+    },
+    "HasFavicon": {
+      "cohens_kappa": 0.4787,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 28,
+      "passed": false,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "binary",
+        "value": null
+      },
+      "type": "binary",
+      "value": 0.75
+    },
+    "HasHiddenFields": {
+      "cohens_kappa": 0.5263,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 27,
+      "passed": false,
+      "phishing_split": {
+        "cohens_kappa": NaN,
+        "gate": 0.85,
+        "metric": "agreement_rate",
+        "n": 6,
+        "passed": true,
+        "type": "binary",
+        "value": 1.0
+      },
+      "type": "binary",
+      "value": 0.7778
+    },
+    "HasPasswordField": {
+      "cohens_kappa": 0.0,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 28,
+      "passed": true,
+      "phishing_split": {
+        "cohens_kappa": NaN,
+        "gate": 0.85,
+        "metric": "agreement_rate",
+        "n": 7,
+        "passed": true,
+        "type": "binary",
+        "value": 1.0
+      },
+      "type": "binary",
+      "value": 0.9286
+    },
+    "HasSocialNet": {
+      "cohens_kappa": 0.8321,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 23,
+      "passed": true,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "binary",
+        "value": null
+      },
+      "type": "binary",
+      "value": 0.9565
+    },
+    "HasSubmitButton": {
+      "cohens_kappa": 0.6572,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 29,
+      "passed": false,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 3,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "binary",
+        "value": null
+      },
+      "type": "binary",
+      "value": 0.8276
+    },
+    "IsResponsive": {
+      "cohens_kappa": 0.6173,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 31,
+      "passed": true,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "binary",
+        "value": null
+      },
+      "type": "binary",
+      "value": 0.9032
+    },
+    "LargestLineLength": {
+      "gate": 0.7,
+      "median_abs_error": 1265.0,
+      "median_ratio": 1.0,
+      "metric": "spearman_rho",
+      "n": 21,
+      "passed": false,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "count",
+        "value": null
+      },
+      "type": "count",
+      "value": 0.479
+    },
+    "LineOfCode": {
+      "gate": 0.7,
+      "median_abs_error": 65.5,
+      "median_ratio": 0.995,
+      "metric": "spearman_rho",
+      "n": 20,
+      "passed": true,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "count",
+        "value": null
+      },
+      "type": "count",
+      "value": 0.8391
+    },
+    "NoOfCSS": {
+      "gate": 0.7,
+      "median_abs_error": 5.0,
+      "median_ratio": 1.7993,
+      "metric": "spearman_rho",
+      "n": 19,
+      "passed": true,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 2,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "count",
+        "value": null
+      },
+      "type": "count",
+      "value": 0.7382
+    },
+    "NoOfEmptyRef": {
+      "gate": 0.7,
+      "median_abs_error": 2.0,
+      "median_ratio": 1.5,
+      "metric": "spearman_rho",
+      "n": 32,
+      "passed": true,
+      "phishing_split": {
+        "gate": 0.7,
+        "median_abs_error": 0.0,
+        "median_ratio": null,
+        "metric": "spearman_rho",
+        "n": 5,
+        "passed": false,
+        "type": "count",
+        "value": null
+      },
+      "type": "count",
+      "value": 0.7146
+    },
+    "NoOfExternalRef": {
+      "gate": 0.7,
+      "median_abs_error": 20.0,
+      "median_ratio": 0.2617,
+      "metric": "spearman_rho",
+      "n": 24,
+      "passed": false,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 4,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "count",
+        "value": null
+      },
+      "type": "count",
+      "value": 0.5667
+    },
+    "NoOfImage": {
+      "gate": 0.7,
+      "median_abs_error": 4.0,
+      "median_ratio": 0.625,
+      "metric": "spearman_rho",
+      "n": 27,
+      "passed": true,
+      "phishing_split": {
+        "gate": 0.7,
+        "median_abs_error": 0.0,
+        "median_ratio": null,
+        "metric": "spearman_rho",
+        "n": 7,
+        "passed": false,
+        "type": "count",
+        "value": null
+      },
+      "type": "count",
+      "value": 0.8898
+    },
+    "NoOfJS": {
+      "gate": 0.7,
+      "median_abs_error": 5.0,
+      "median_ratio": 1.3636,
+      "metric": "spearman_rho",
+      "n": 29,
+      "passed": true,
+      "phishing_split": {
+        "gate": 0.7,
+        "median_abs_error": 0.0,
+        "median_ratio": 1.0,
+        "metric": "spearman_rho",
+        "n": 6,
+        "passed": false,
+        "type": "count",
+        "value": 0.2
+      },
+      "type": "count",
+      "value": 0.8161
+    },
+    "NoOfPopup": {
+      "gate": 0.7,
+      "median_abs_error": 0.0,
+      "median_ratio": 1.0,
+      "metric": "spearman_rho",
+      "n": 34,
+      "passed": false,
+      "phishing_split": {
+        "gate": 0.7,
+        "median_abs_error": 0.0,
+        "median_ratio": null,
+        "metric": "spearman_rho",
+        "n": 6,
+        "passed": false,
+        "type": "count",
+        "value": null
+      },
+      "type": "count",
+      "value": 0.6378
+    },
+    "NoOfSelfRedirect": {
+      "cohens_kappa": NaN,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 21,
+      "passed": true,
+      "phishing_split": {
+        "cohens_kappa": NaN,
+        "gate": 0.85,
+        "metric": "agreement_rate",
+        "n": 5,
+        "passed": true,
+        "type": "binary",
+        "value": 1.0
+      },
+      "type": "binary",
+      "value": 1.0
+    },
+    "NoOfSelfRef": {
+      "gate": 0.7,
+      "median_abs_error": 25.5,
+      "median_ratio": 0.9894,
+      "metric": "spearman_rho",
+      "n": 28,
+      "passed": false,
+      "phishing_split": {
+        "gate": 0.7,
+        "median_abs_error": 1.0,
+        "median_ratio": 0.0,
+        "metric": "spearman_rho",
+        "n": 7,
+        "passed": false,
+        "type": "count",
+        "value": -0.6455
+      },
+      "type": "count",
+      "value": 0.6386
+    },
+    "NoOfURLRedirect": {
+      "cohens_kappa": 0.0,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 25,
+      "passed": true,
+      "phishing_split": {
+        "cohens_kappa": NaN,
+        "gate": 0.85,
+        "metric": "agreement_rate",
+        "n": 5,
+        "passed": true,
+        "type": "binary",
+        "value": 1.0
+      },
+      "type": "binary",
+      "value": 0.88
+    },
+    "NoOfiFrame": {
+      "gate": 0.7,
+      "median_abs_error": 0.0,
+      "median_ratio": 0.2083,
+      "metric": "spearman_rho",
+      "n": 32,
+      "passed": false,
+      "phishing_split": {
+        "gate": 0.7,
+        "median_abs_error": 0.0,
+        "median_ratio": null,
+        "metric": "spearman_rho",
+        "n": 6,
+        "passed": false,
+        "type": "count",
+        "value": null
+      },
+      "type": "count",
+      "value": 0.5775
+    },
+    "Pay": {
+      "cohens_kappa": 0.2821,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 28,
+      "passed": false,
+      "phishing_split": {
+        "cohens_kappa": NaN,
+        "gate": 0.85,
+        "metric": "agreement_rate",
+        "n": 5,
+        "passed": true,
+        "type": "binary",
+        "value": 1.0
+      },
+      "type": "binary",
+      "value": 0.7143
+    },
+    "Robots": {
+      "cohens_kappa": 0.0,
+      "gate": 0.85,
+      "metric": "agreement_rate",
+      "n": 33,
+      "passed": false,
+      "phishing_split": {
+        "gate": null,
+        "metric": "insufficient_data",
+        "n": 2,
+        "note": "too few comparable rows to judge; demoted by default",
+        "passed": false,
+        "type": "binary",
+        "value": null
+      },
+      "type": "binary",
+      "value": 0.4242
+    }
+  },
+  "gates": {
+    "binary_agreement_rate": 0.85,
+    "count_spearman_rho": 0.7
+  },
+  "judged_on": "legitimate URLs only",
+  "n_fixtures": 52,
+  "n_legitimate": 45,
+  "n_phishing": 7,
+  "ref_scope": "anchor",
+  "ref_scope_comparison": {
+    "all_resources": 0.6142,
+    "anchor": 0.6399666666666666
+  },
+  "ref_scope_note": "Scored both definitions on the three reference-count features and kept 'anchor'. This is a measured choice, not a preference.",
+  "status": "measured",
+  "trained_with_demoted": [
+    "Bank",
+    "HasExternalFormSubmit",
+    "HasFavicon",
+    "HasHiddenFields",
+    "HasSubmitButton",
+    "LargestLineLength",
+    "NoOfExternalRef",
+    "NoOfPopup",
+    "NoOfSelfRef",
+    "NoOfiFrame",
+    "Pay",
+    "Robots"
+  ]
+}

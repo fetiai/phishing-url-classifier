@@ -1,6 +1,17 @@
-# Artifact bundle -- built by train.py, baked into the image, never committed.
-# The image tag is the complete description of which models are being served.
-artifacts/
+# The artifact bundle IS committed, deliberately.
+#
+# It is a build output, and the instinct is to keep build outputs out of git. But the
+# deployment target builds from the committed repository, so anything not tracked here is
+# simply absent from the build context -- and the image bakes the bundle in rather than
+# mounting it, precisely so the image tag fully describes what the service predicts.
+#
+# The alternatives are worse. Training during the image build would put a ~2 GB job on a
+# 2 GB host at deploy time. Mounting the bundle at runtime would decouple the image tag
+# from the behaviour and reintroduce the "which model is actually serving?" question.
+#
+# So the 4.8 MB is tracked. Re-run `make train` and commit the result after any change
+# that affects features, preprocessing, or models -- `make verify-bundle` checks that the
+# committed bundle matches the committed code.
 
 # Python
 __pycache__/
@@ -30,3 +41,12 @@ Thumbs.db
 
 # Local environment
 .env
+
+# Credentials and deploy keys. Never tracked: a `git add -A` will otherwise sweep a
+# private key into a commit, and rewriting history is the only way back out.
+.ssh/
+*.pem
+*_rsa
+*_ed25519
+id_*
+!*.pub.example

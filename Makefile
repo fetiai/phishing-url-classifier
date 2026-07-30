@@ -33,16 +33,17 @@ test-fast: ## The subset that runs in seconds
 test-network: ## Live agreement against the internet -- run manually
 	$(PY) -m pytest -m network
 
-train: ## Build the canonical artifact bundle, honouring the demotion list
-	# The agreement report is an input, not a by-product: the demotion list decides what
-	# the extractor emits at serving time, so a model fitted without it is fitted on
-	# features it will never receive.
-	$(PY) -m phishguard.train --profile corrected \
-		--agreement artifacts/v1/extraction_agreement.json \
-		--demote "$$($(PY) -c "import json,pathlib; p=pathlib.Path('artifacts/v1/extraction_agreement.json'); print(','.join(json.loads(p.read_text()).get('demoted',[])) if p.exists() else '')")"
-
-train-fresh: ## Build a bundle with no demotion list (first run, before the gate)
+train: ## Build the artifact bundle (reads the demotion list from extraction_agreement.json)
 	$(PY) -m phishguard.train --profile corrected
+	@echo
+	@echo "The bundle is tracked in git because the deployment target builds from the"
+	@echo "committed repository. Commit artifacts/v1/ along with this change."
+
+train-fresh: ## Build a bundle with no demotion list (before the gate has ever run)
+	$(PY) -m phishguard.train --profile corrected --agreement /nonexistent
+
+verify-bundle: ## Check the committed bundle is present, intact, and matches the code
+	$(PY) -m phishguard.verify_bundle
 
 train-legacy: ## Reproduce the notebook's recorded (leaky) metrics
 	$(PY) -m phishguard.train --profile legacy

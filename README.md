@@ -33,9 +33,14 @@ When too little of the page can be read, it says so rather than guessing — see
 
 ```bash
 make install          # venv + pinned dependencies
-make train            # build the artifact bundle (~3 minutes)
 make app              # http://localhost:8501
 ```
+
+No training step: **the artifact bundle is committed** (4.8 MB under `artifacts/v1/`), so a
+fresh clone can serve and can build an image immediately. `make train` rebuilds it, and the
+result should be committed with the change that prompted it — `make verify-bundle` checks
+that the committed bundle is present in git, intact, and trained against the committed
+demotion list.
 
 `make test` runs the full offline suite; `make lint type` runs ruff and mypy.
 
@@ -47,9 +52,18 @@ export FETCH_SELF_IPS=203.0.113.10        # this host's public address — requi
 docker compose up -d --build
 ```
 
-The image **bakes the artifact bundle in** rather than mounting it, so the image tag is a
-complete description of what the service will predict, and rolling back is deploying the
-previous tag. The build fails if the bundle does not reproduce its own golden row.
+The image **bakes the bundle in** rather than mounting it, so the image tag is a complete
+description of what the service will predict and rolling back is deploying the previous
+tag. The build fails if the bundle does not reproduce its own golden row.
+
+That is also why the bundle is tracked rather than gitignored. A deploy host typically
+builds from the *committed* repository, so an ignored build output is simply absent from the
+build context: `COPY artifacts/` then fails there while succeeding on a developer machine,
+where the build context is the working directory. Training during the image build would
+avoid the commit but would put a ~2 GB job on a 2 GB host at deploy time.
+
+Before deploying, run `make verify-bundle` — it asks git, not the filesystem, whether the
+host will receive everything the image needs.
 
 ## Results
 

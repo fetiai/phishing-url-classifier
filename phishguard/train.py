@@ -63,6 +63,11 @@ log = logging.getLogger("phishguard.train")
 TRAIN_CSV = Path("data/raw/train.csv")
 DEFAULT_OUT = Path("artifacts/v1")
 
+#: The agreement report is a tracked *input*, not a build output. It is measured over
+#: committed fixtures with no network, so it is reproducible and belongs in version
+#: control where a reviewer can see which page features are trusted.
+DEFAULT_AGREEMENT = Path("extraction_agreement.json")
+
 RANDOM_STATE = 42
 TEST_SIZE = 0.2
 
@@ -390,8 +395,8 @@ def main() -> None:
     parser.add_argument(
         "--agreement",
         type=Path,
-        default=None,
-        help="extraction agreement report to fold into the bundle",
+        default=DEFAULT_AGREEMENT,
+        help="extraction agreement report; supplies the demotion list",
     )
     parser.add_argument(
         "--no-legacy",
@@ -406,6 +411,14 @@ def main() -> None:
     )
 
     demoted = frozenset(f.strip() for f in args.demote.split(",") if f.strip())
+    if not demoted and args.agreement and args.agreement.exists():
+        # Reading the demotion list from the report rather than requiring it to be typed
+        # again: two sources for the same list is two things to keep in sync, and a model
+        # trained on features the extractor will never emit is trained on the wrong thing.
+        report = json.loads(args.agreement.read_text(encoding="utf-8"))
+        demoted = frozenset(report.get("demoted", ()))
+        if demoted:
+            print(f"demoting {len(demoted)} page feature(s) per {args.agreement}")
     unknown = demoted - set(schema.HTML_FEATURES)
     if unknown:
         raise SystemExit(f"--demote names features that are not page features: {sorted(unknown)}")

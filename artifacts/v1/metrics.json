@@ -1,0 +1,256 @@
+{
+  "artifact_schema_version": "v1",
+  "baseline_accuracy": 0.9248,
+  "baseline_note": "A constant 'legitimate' predictor scores this. Read every accuracy against it: on its own the number cannot tell a working detector from a constant.",
+  "n_train": 112323,
+  "n_validation": 28081,
+  "positive_class": "phishing (label 0)",
+  "profiles": {
+    "corrected": {
+      "knn_k": 20,
+      "leaky": false,
+      "models": {
+        "_parity": {
+          "knn": 0.00035611267405006946,
+          "naive_bayes": 0.011288771767387202
+        },
+        "knn_scratch": {
+          "accuracy": 0.9804494141946511,
+          "average_precision_phishing": 0.9674091116816042,
+          "baseline_accuracy": 0.9248,
+          "confusion_matrix": [
+            [
+              1634,
+              518
+            ],
+            [
+              31,
+              25898
+            ]
+          ],
+          "family": "knn",
+          "is_scratch": true,
+          "legitimate_f1": 0.9895118922533194,
+          "legitimate_precision": 0.9803906723198061,
+          "legitimate_recall": 0.998804427475028,
+          "lift_over_baseline": 0.05564941419465119,
+          "name": "KNN (from scratch)",
+          "phishing_f1": 0.856169766832591,
+          "phishing_precision": 0.9813813813813814,
+          "phishing_recall": 0.7592936802973977,
+          "predict_seconds": 5.637033897000947,
+          "support_legitimate": 25929,
+          "support_phishing": 2152
+        },
+        "knn_sklearn": {
+          "accuracy": 0.9807343043338912,
+          "average_precision_phishing": 0.9674091116816042,
+          "baseline_accuracy": 0.9248,
+          "confusion_matrix": [
+            [
+              1643,
+              509
+            ],
+            [
+              32,
+              25897
+            ]
+          ],
+          "family": "knn",
+          "is_scratch": false,
+          "legitimate_f1": 0.9896627495939619,
+          "legitimate_precision": 0.9807240778610922,
+          "legitimate_recall": 0.9987658606193837,
+          "lift_over_baseline": 0.05593430433389124,
+          "name": "KNN (scikit-learn)",
+          "phishing_f1": 0.8586360073164359,
+          "phishing_precision": 0.9808955223880597,
+          "phishing_recall": 0.7634758364312267,
+          "predict_seconds": 1.3011771459860029,
+          "support_legitimate": 25929,
+          "support_phishing": 2152
+        },
+        "nb_scratch": {
+          "accuracy": 0.9778854029414907,
+          "average_precision_phishing": 0.9147627788792893,
+          "baseline_accuracy": 0.9248,
+          "confusion_matrix": [
+            [
+              1696,
+              456
+            ],
+            [
+              165,
+              25764
+            ]
+          ],
+          "family": "naive_bayes",
+          "is_scratch": true,
+          "legitimate_f1": 0.988091813841109,
+          "legitimate_precision": 0.9826086956521739,
+          "legitimate_recall": 0.9936364688186972,
+          "lift_over_baseline": 0.05308540294149078,
+          "name": "Gaussian Naive Bayes (from scratch)",
+          "phishing_f1": 0.8452529279840518,
+          "phishing_precision": 0.9113379903277807,
+          "phishing_recall": 0.7881040892193308,
+          "predict_seconds": 0.026968637001118623,
+          "support_legitimate": 25929,
+          "support_phishing": 2152
+        },
+        "nb_sklearn": {
+          "accuracy": 0.9819094761582565,
+          "average_precision_phishing": 0.8682326548670248,
+          "baseline_accuracy": 0.9248,
+          "confusion_matrix": [
+            [
+              1911,
+              241
+            ],
+            [
+              267,
+              25662
+            ]
+          ],
+          "family": "naive_bayes",
+          "is_scratch": false,
+          "legitimate_f1": 0.9901991048001235,
+          "legitimate_precision": 0.9906960583716172,
+          "legitimate_recall": 0.9897026495429828,
+          "lift_over_baseline": 0.05710947615825657,
+          "name": "Gaussian Naive Bayes (scikit-learn)",
+          "phishing_f1": 0.8826789838337183,
+          "phishing_precision": 0.8774104683195593,
+          "phishing_recall": 0.8880111524163569,
+          "predict_seconds": 0.008911237004213035,
+          "support_legitimate": 25929,
+          "support_phishing": 2152
+        }
+      },
+      "note": "Canonical. Serving-time statistics are the training-time statistics."
+    },
+    "legacy": {
+      "knn_k": 6,
+      "leaky": true,
+      "models": {
+        "_parity": {
+          "knn": 0.0022791211139204445,
+          "naive_bayes": 0.011253160499982194
+        },
+        "knn_scratch": {
+          "accuracy": 0.9855774367009722,
+          "average_precision_phishing": 0.9533724979602588,
+          "baseline_accuracy": 0.9248,
+          "confusion_matrix": [
+            [
+              1795,
+              357
+            ],
+            [
+              48,
+              25881
+            ]
+          ],
+          "family": "knn",
+          "is_scratch": true,
+          "legitimate_f1": 0.9922364713324515,
+          "legitimate_precision": 0.9863937800137206,
+          "legitimate_recall": 0.9981487909290756,
+          "lift_over_baseline": 0.06077743670097224,
+          "name": "KNN (from scratch)",
+          "phishing_f1": 0.8986232790988736,
+          "phishing_precision": 0.9739555073250136,
+          "phishing_recall": 0.8341078066914498,
+          "predict_seconds": 5.352090013009729,
+          "support_legitimate": 25929,
+          "support_phishing": 2152
+        },
+        "knn_sklearn": {
+          "accuracy": 0.9862896620490723,
+          "average_precision_phishing": 0.9533724979602588,
+          "baseline_accuracy": 0.9248,
+          "confusion_matrix": [
+            [
+              1837,
+              315
+            ],
+            [
+              70,
+              25859
+            ]
+          ],
+          "family": "knn",
+          "is_scratch": false,
+          "legitimate_f1": 0.9926107901656336,
+          "legitimate_precision": 0.9879651562619394,
+          "legitimate_recall": 0.9973003201049019,
+          "lift_over_baseline": 0.06148966204907236,
+          "name": "KNN (scikit-learn)",
+          "phishing_f1": 0.9051490514905149,
+          "phishing_precision": 0.9632931305715784,
+          "phishing_recall": 0.8536245353159851,
+          "predict_seconds": 0.5451889800024219,
+          "support_legitimate": 25929,
+          "support_phishing": 2152
+        },
+        "nb_scratch": {
+          "accuracy": 0.9779566254763007,
+          "average_precision_phishing": 0.9172754184980767,
+          "baseline_accuracy": 0.9248,
+          "confusion_matrix": [
+            [
+              1693,
+              459
+            ],
+            [
+              160,
+              25769
+            ]
+          ],
+          "family": "naive_bayes",
+          "is_scratch": true,
+          "legitimate_f1": 0.9881319861188336,
+          "legitimate_precision": 0.9824996187280769,
+          "legitimate_recall": 0.9938293030969185,
+          "lift_over_baseline": 0.053156625476300734,
+          "name": "Gaussian Naive Bayes (from scratch)",
+          "phishing_f1": 0.8454431960049937,
+          "phishing_precision": 0.9136535348084188,
+          "phishing_recall": 0.7867100371747212,
+          "predict_seconds": 0.030275345998234116,
+          "support_legitimate": 25929,
+          "support_phishing": 2152
+        },
+        "nb_sklearn": {
+          "accuracy": 0.9820163099604715,
+          "average_precision_phishing": 0.868592464247948,
+          "baseline_accuracy": 0.9248,
+          "confusion_matrix": [
+            [
+              1908,
+              244
+            ],
+            [
+              261,
+              25668
+            ]
+          ],
+          "family": "naive_bayes",
+          "is_scratch": false,
+          "legitimate_f1": 0.990258675565672,
+          "legitimate_precision": 0.990583513430071,
+          "legitimate_recall": 0.9899340506768484,
+          "lift_over_baseline": 0.057216309960471556,
+          "name": "Gaussian Naive Bayes (scikit-learn)",
+          "phishing_f1": 0.8831289053459848,
+          "phishing_precision": 0.8796680497925311,
+          "phishing_recall": 0.8866171003717472,
+          "predict_seconds": 0.007110938007826917,
+          "support_legitimate": 25929,
+          "support_phishing": 2152
+        }
+      },
+      "note": "Reconstruction of the original's configuration, including standardising each split by its own mean and standard deviation. Reported for provenance only. The scaling behind these numbers does not exist at serving time and cannot be reconstructed from a single URL, so they describe a model that cannot be deployed."
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "artifact_schema_version": "v1",
+  "demoted_features": [
+    "Bank",
+    "HasExternalFormSubmit",
+    "HasFavicon",
+    "HasHiddenFields",
+    "HasSubmitButton",
+    "LargestLineLength",
+    "NoOfExternalRef",
+    "NoOfPopup",
+    "NoOfSelfRef",
+    "NoOfiFrame",
+    "Pay",
+    "Robots"
+  ],
+  "feature_count": 49,
+  "files": {
+    "dataset_profile.json": {
+      "bytes": 2376,
+      "sha256": "fbfd8990c2a2c2beab4156fa696e5b3a8e99acb6c7fbb350828925bb2e0207c2"
+    },
+    "dataset_sample.parquet": {
+      "bytes": 1273662,
+      "sha256": "f1db6c935179215d406679968879d3d46541d0ef9d21b362f0d22d72f83e6b2c"
+    },
+    "eval_predictions.parquet": {
+      "bytes": 468651,
+      "sha256": "254c03faa58b6bb2bccce76bf568a6550a29d1f55e70b2e08e966ca6e4f99c9c"
+    },
+    "extraction_agreement.json": {
+      "bytes": 12487,
+      "sha256": "70da29451065c2519bc39bf7f27a93b97a972bcce84cd1b65baeac7a28f1c683"
+    },
+    "feature_reference_stats.json": {
+      "bytes": 17421,
+      "sha256": "f269f89ff787050ee1dbd0196b5a1c87417a16be6d95d7aa78ceda5a2c133cb9"
+    },
+    "fitted_stats.json": {
+      "bytes": 676974,
+      "sha256": "9d8d3804ec079bef9f47d4a63abe365d1a69830a5b7348d53359d00e0cfd5e65"
+    },
+    "golden_row.json": {
+      "bytes": 2549,
+      "sha256": "2a2e64148dbb0c2d298eae5e4071ca496e642fcb98a06cc2d7cfbb3d3900ea27"
+    },
+    "metrics.json": {
+      "bytes": 8695,
+      "sha256": "4ed0d21483c05158a52523ee3be4fdd323da29f4cfb7f51a71f5612b7765bc8f"
+    },
+    "models/knn_scratch.npz": {
+      "bytes": 398019,
+      "sha256": "b488e776208c4e017681c3ca34761aded2b8b05eea2a316347704490bf48fd50"
+    },
+    "models/knn_sklearn.joblib": {
+      "bytes": 2040854,
+      "sha256": "0c1ca136527e597c5a77dccf1dc0d6d3d61e52e3e3afa770099d48a2fc393503"
+    },
+    "models/nb_scratch.json": {
+      "bytes": 5059,
+      "sha256": "3684b743ffb90e8e2886ab30f0ebee2c8c153dbd64cb4532b57d126156791a1b"
+    },
+    "models/nb_sklearn.joblib": {
+      "bytes": 1617,
+      "sha256": "e0a3cde0dcfc09e77a966c6d7181efc5044e5636150cdd33b81ecb2779716473"
+    }
+  },
+  "git_sha": "2958810f8447e1883ef42a5187816e797e309217",
+  "keyword_list_version": "1",
+  "knn_k": 20,
+  "knn_reference_rows": 10000,
+  "phishguard_version": "1.0.0",
+  "profile": "corrected",
+  "random_state": 42,
+  "test_size": 0.2
+}

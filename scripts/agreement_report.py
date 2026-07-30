@@ -201,7 +201,7 @@ def main() -> None:
         default="both",
         help="which reference-count definition to score; 'both' picks the winner",
     )
-    parser.add_argument("--out", type=Path, default=Path("artifacts/v1/extraction_agreement.json"))
+    parser.add_argument("--out", type=Path, default=Path("extraction_agreement.json"))
     args = parser.parse_args()
 
     if args.ref_scope == "both":

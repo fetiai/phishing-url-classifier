@@ -1,4 +1,19 @@
-# PhishGuard
+<div align="center">
+
+# Phishing URL Classifier
+
+**Group 16** · IF3070 Foundations of Artificial Intelligence · STEI ITB
+
+<p>
+  <img src="https://img.shields.io/badge/course-IF3070-3b5bdb?style=flat-square" alt="IF3070" />
+  <img src="https://img.shields.io/badge/institution-STEI%20ITB-1f2937?style=flat-square" alt="STEI ITB" />
+  <img src="https://img.shields.io/badge/year-2024%2F2025--1-6b7280?style=flat-square" alt="2024/2025-1" />
+  <img src="https://img.shields.io/badge/group-16-3b5bdb?style=flat-square" alt="Group 16" />
+</p>
+
+</div>
+
+[![The app scoring a URL against four models](.github/assets/phishing-url-classifier.webp)](https://phiusiil.faizath.com)
 
 Phishing URL classification with k-Nearest Neighbours and Gaussian Naive Bayes — each
 implemented twice, from scratch and with scikit-learn — served as a single Streamlit
@@ -8,9 +23,34 @@ application.
 > static 2023–24 dataset, has no threat intelligence, no blocklist, and no knowledge of any
 > campaign newer than its training data. Do not use it to decide whether a link is safe.
 
-IF3070 Foundations of Artificial Intelligence, Tugas Besar 2 — Kelompok 16:
-Thalita Zahra Sutejo (18222023), Irfan Musthofa (18222056), Eleanor Cordelia (18222059),
-Muhammad Faiz Atharrahman (18222063).
+**Algorithms**
+
+`K-Nearest Neighbors (from scratch)` · `K-Nearest Neighbors (scikit-learn)` ·
+`Gaussian Naive Bayes (from scratch)` · `Gaussian Naive Bayes (scikit-learn)` ·
+`EDA` · `Feature Engineering` · `SMOTE`
+
+**Built with**
+
+<p>
+  <img src=".github/assets/logos/python.svg" width="18" height="18" align="top" alt="" /> Python &nbsp;
+  <img src=".github/assets/logos/scikit-learn.svg" width="18" height="18" align="top" alt="" /> scikit-learn &nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logos/numpy-dark.svg" />
+    <img src=".github/assets/logos/numpy.svg" width="18" height="18" align="top" alt="" />
+  </picture> NumPy &nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logos/pandas-dark.svg" />
+    <img src=".github/assets/logos/pandas.svg" width="18" height="18" align="top" alt="" />
+  </picture> pandas &nbsp;
+  <img src=".github/assets/logos/scipy.svg" width="18" height="18" align="top" alt="" /> SciPy &nbsp;
+  <img src=".github/assets/logos/streamlit.svg" width="18" height="18" align="top" alt="" /> Streamlit &nbsp;
+  <img src=".github/assets/logos/jupyter.svg" width="18" height="18" align="top" alt="" /> Jupyter &nbsp;
+  <img src=".github/assets/logos/docker.svg" width="18" height="18" align="top" alt="" /> Docker
+</p>
+
+**Links** — [Live demo](https://phiusiil.faizath.com) ·
+[Dataset](https://archive.ics.uci.edu/dataset/967/phiusiil+phishing+url+dataset) ·
+[Report (PDF, Indonesian)](doc/Tubes2_Kelompok16_18222023_18222056_18222059_18222063.pdf)
 
 ---
 
@@ -227,3 +267,98 @@ The tests that carry the weight:
 The dataset is the UCI PhiUSIIL Phishing URL Dataset (ID 967). The report in `doc/` and the
 notebook in `notebooks/` are coursework artifacts; the notebook is frozen provenance and is
 never edited.
+
+---
+
+## Team
+
+<div align="center">
+
+<table>
+  <tr>
+    <td width="220" align="center" valign="top">
+      <a href="https://github.com/thalitazhrr">
+        <img src="https://github.com/thalitazhrr.png?size=140" width="120" height="120" alt="Thalita Zahra Sutejo" style="border-radius:50%" />
+      </a>
+      <br /><br />
+      <b>Thalita Zahra Sutejo</b><br />
+      18222023
+      <br /><br />
+      <a href="https://github.com/thalitazhrr">
+        <img src=".github/assets/github.svg" width="14" height="14" alt="" />
+        thalitazhrr
+      </a>
+      <br />
+      <a href="https://www.linkedin.com/in/thalitazahras/">
+        <img src=".github/assets/linkedin.svg" width="14" height="14" alt="" />
+        thalitazahras
+      </a>
+    </td>
+    <td width="220" align="center" valign="top">
+      <a href="https://github.com/IrfanMusthofa">
+        <img src="https://github.com/IrfanMusthofa.png?size=140" width="120" height="120" alt="Irfan Musthofa" style="border-radius:50%" />
+      </a>
+      <br /><br />
+      <b>Irfan Musthofa</b><br />
+      18222056
+      <br /><br />
+      <a href="https://github.com/IrfanMusthofa">
+        <img src=".github/assets/github.svg" width="14" height="14" alt="" />
+        IrfanMusthofa
+      </a>
+      <br />
+      <a href="https://www.linkedin.com/in/irfanmusthofa/">
+        <img src=".github/assets/linkedin.svg" width="14" height="14" alt="" />
+        irfanmusthofa
+      </a>
+    </td>
+    <td width="220" align="center" valign="top">
+      <a href="https://github.com/EleanorCordelia">
+        <img src="https://github.com/EleanorCordelia.png?size=140" width="120" height="120" alt="Eleanor Cordelia" style="border-radius:50%" />
+      </a>
+      <br /><br />
+      <b>Eleanor Cordelia</b><br />
+      18222059
+      <br /><br />
+      <a href="https://github.com/EleanorCordelia">
+        <img src=".github/assets/github.svg" width="14" height="14" alt="" />
+        EleanorCordelia
+      </a>
+      <br />
+      <a href="https://www.linkedin.com/in/eleanorcordelia/">
+        <img src=".github/assets/linkedin.svg" width="14" height="14" alt="" />
+        eleanorcordelia
+      </a>
+    </td>
+    <td width="220" align="center" valign="top">
+      <a href="https://github.com/faizath">
+        <img src="https://github.com/faizath.png?size=140" width="120" height="120" alt="Muhammad Faiz Atharrahman" style="border-radius:50%" />
+      </a>
+      <br /><br />
+      <b>Muhammad Faiz Atharrahman</b><br />
+      18222063
+      <br /><br />
+      <a href="https://github.com/faizath">
+        <img src=".github/assets/github.svg" width="14" height="14" alt="" />
+        faizath
+      </a>
+      <br />
+      <a href="https://www.linkedin.com/in/faizath/">
+        <img src=".github/assets/linkedin.svg" width="14" height="14" alt="" />
+        faizath
+      </a>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+---
+
+<div align="center">
+
+IF3070 Foundations of Artificial Intelligence · STEI ITB · 2024/2025-1
+
+More at **[fetiai.github.io](https://fetiai.github.io/)**
+
+</div>
